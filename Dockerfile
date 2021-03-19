@@ -109,10 +109,10 @@ RUN cd /usr/local/bin \
 	&& ln -s python3-config python-config
 
 # if this is called "PIP_VERSION", pip explodes with "ValueError: invalid truth value '<VERSION>'"
-ENV PYTHON_PIP_VERSION 20.3.1
+ENV PYTHON_PIP_VERSION 21.0.1
 # https://github.com/pypa/get-pip
-ENV PYTHON_GET_PIP_URL https://github.com/pypa/get-pip/raw/91630a4867b1f93ba0a12aa81d0ec4ecc1e7eeb9/get-pip.py
-ENV PYTHON_GET_PIP_SHA256 d48ae68f297cac54db17e4107b800faae0e5210131f9f386c30c0166bf8d81b7
+ENV PYTHON_GET_PIP_URL https://github.com/pypa/get-pip/raw/4be3fe44ad9dedc028629ed1497052d65d281b8e/get-pip.py
+ENV PYTHON_GET_PIP_SHA256 8006625804f55e1bd99ad4214fd07082fee27a1c35945648a58f9087a714e9d4
 
 RUN set -ex; \
 	\
@@ -186,7 +186,7 @@ RUN wget -N https://chromedriver.storage.googleapis.com/87.0.4280.20/chromedrive
     chmod 0755 /usr/bin/chromedriver
 
 # Install python requirements
-RUN pip3 install --no-cache-dir -r https://raw.githubusercontent.com/ManusiaRakitan/XBot-Remix/x-sql-extended/requirements.txt --use-feature=2020-resolver
+RUN pip3 install --no-cache-dir -r https://raw.githubusercontent.com/ManusiaRakitan/Kampang-Bot/Kampang/requirements.txt --use-feature=2020-resolver
 
 # Clean Up
 RUN apt-get clean --dry-run
