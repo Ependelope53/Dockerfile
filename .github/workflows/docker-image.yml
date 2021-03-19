@@ -2,9 +2,9 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ manusiarakitan ]
+    branches: [ master ]
   pull_request:
-    branches: [ manusiarakitan ]
+    branches: [ master ]
 
 jobs:
 
