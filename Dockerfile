@@ -186,7 +186,7 @@ RUN wget -N https://chromedriver.storage.googleapis.com/87.0.4280.20/chromedrive
     chmod 0755 /usr/bin/chromedriver
 
 # Install python requirements
-RUN pip3 install --no-cache-dir -r https://github.com/ManusiaRakitan/Dockerfile/groovy/requirements.txt --use-feature=2020-resolver
+RUN pip3 install --no-cache-dir -r https://github.com/ManusiaRakitan/Dockerfile/manusiarakitan/requirements.txt --use-feature=2020-resolver
 
 # Clean Up
 RUN apt-get clean --dry-run
