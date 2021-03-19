@@ -1,4 +1,4 @@
-FROM ubuntu:groovy
+FROM ubuntu:21.04
 LABEL maintainer "ManusiaRakitan <zcamel07@gmail.com>"
 
 RUN ln -fs /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
