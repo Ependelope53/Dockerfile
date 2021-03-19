@@ -1,8 +1,8 @@
-FROM ubuntu:21.04
+FROM ubuntu:groovy
 LABEL maintainer "ManusiaRakitan <zcamel07@gmail.com>"
 
 RUN ln -fs /usr/share/zoneinfo/Asia/Jakarta /etc/localtime
-RUN apt update && apt -y upgrade && apt install -y --no-install-recommends tzdata locales
+RUN apt update && apt -y upgrade && apt install -y tzdata locales
 RUN locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
 ENV LANGUAGE en_US:en
@@ -16,18 +16,18 @@ ENV PATH /usr/local/bin:$PATH
 ENV LANG C.UTF-8
 
 # runtime dependencies
-RUN apt-get install -y --no-install-recommends \
+RUN apt-get -qq update && apt-get -qq install -y --no-install-recommends \
 		ca-certificates \
 		netbase \
 	&& rm -rf /var/lib/apt/lists/*
 
 ENV GPG_KEY E3FF2839C048B25C084DEBE9B26995E310250568
-ENV PYTHON_VERSION 3.9.1
+ENV PYTHON_VERSION 3.9.2
 
 RUN set -ex \
 	\
 	&& savedAptMark="$(apt-mark showmanual)" \
-	&& apt-get update && apt-get install -y --no-install-recommends \
+	&& apt-get update -qq && apt-get -qq install -y --no-install-recommends \
 		dpkg-dev \
 		gcc \
 		libbluetooth-dev \
@@ -69,7 +69,7 @@ RUN set -ex \
 		--enable-optimizations \
 		--enable-option-checking=fatal \
 		--enable-shared \
-		--with-lto \
+                --with-lto \
 		--with-system-expat \
 		--with-system-ffi \
 		--without-ensurepip \
@@ -78,11 +78,12 @@ RUN set -ex \
 		LDFLAGS="-Wl,--strip-all -fno-semantic-interposition" \
 	&& make install \
 	&& rm -rf /usr/src/python \
-	\
+        \
 	&& find /usr/local -depth \
 		\( \
 			\( -type d -a \( -name test -o -name tests -o -name idle_test \) \) \
-			-o \( -type f -a \( -name '*.pyc' -o -name '*.pyo' -o -name '*.a' \) \) \
+			-o \
+			\( -type f -a \( -name '*.pyc' -o -name '*.pyo' \) \) \
 		\) -exec rm -rf '{}' + \
 	\
 	&& ldconfig \
@@ -96,7 +97,7 @@ RUN set -ex \
 		| cut -d: -f1 \
 		| sort -u \
 		| xargs -r apt-mark manual \
-	&& apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
+	&& apt-get -qq purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
 	&& rm -rf /var/lib/apt/lists/* \
 	\
 	&& python3 --version
@@ -117,15 +118,15 @@ ENV PYTHON_GET_PIP_SHA256 8006625804f55e1bd99ad4214fd07082fee27a1c35945648a58f90
 RUN set -ex; \
 	\
 	savedAptMark="$(apt-mark showmanual)"; \
-	apt-get update; \
-	apt-get install -y --no-install-recommends wget; \
+	apt-get -qq update; \
+	apt-get -qq install -y --no-install-recommends wget; \
 	\
 	wget -O get-pip.py "$PYTHON_GET_PIP_URL"; \
 	echo "$PYTHON_GET_PIP_SHA256 *get-pip.py" | sha256sum --check --strict -; \
 	\
 	apt-mark auto '.*' > /dev/null; \
 	[ -z "$savedAptMark" ] || apt-mark manual $savedAptMark; \
-	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
+	apt-get -qq purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
 	rm -rf /var/lib/apt/lists/*; \
 	\
 	python get-pip.py \
@@ -143,33 +144,30 @@ RUN set -ex; \
 		\) -exec rm -rf '{}' +; \
 	rm -f get-pip.py
 
-RUN apt-get -qq update && apt-get -qq install -y --no-install-recommends \
+# Install apt for Kampang-Bot
+RUN apt-get -qq update && apt-get -qq install -y \
     apt-utils \
     aria2 \
     bash \
     build-essential \
     curl \
     figlet \
-    imagemagick \
     neofetch \
     postgresql \
     pv \
     jq \
     ffmpeg \
-    gnupg \
-    libxml2-dev \
+    libxml2 \
     libssl-dev \
-    libxslt-dev \
     wget \
     zip \
     unzip \
     unar \
+    unrar \
     git \
     libpq-dev \
     sudo \
-    zlib1g-dev \
-    megatools \
-    p7zip-full
+    megatools
 
 # Install google chrome
 RUN sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list' && \
@@ -177,7 +175,7 @@ RUN sh -c 'echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc
     apt-get -qq update && apt-get -qq install -y google-chrome-stable
 
 # Install chromedriver
-RUN wget -N https://chromedriver.storage.googleapis.com/87.0.4280.20/chromedriver_linux64.zip -P ~/ && \
+RUN wget -N https://chromedriver.storage.googleapis.com/$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE)/chromedriver_linux64.zip -P ~/ && \
     unzip ~/chromedriver_linux64.zip -d ~/ && \
     rm ~/chromedriver_linux64.zip && \
     mv -f ~/chromedriver /usr/bin/chromedriver && \
@@ -185,9 +183,6 @@ RUN wget -N https://chromedriver.storage.googleapis.com/87.0.4280.20/chromedrive
     chmod 0755 /usr/bin/chromedriver
 
 # Install python requirements
-RUN pip3 install --no-cache-dir -r https://raw.githubusercontent.com/ManusiaRakitan/Dockerfile/master/requirements.txt --use-feature=2020-resolver
-
-# Clean Up
-RUN apt-get clean --dry-run
+RUN pip3 install -r https://raw.githubusercontent.com/ManusiaRakitan/Kampang-Bot/Kampang/requirements.txt
 
 CMD ["bash"]
