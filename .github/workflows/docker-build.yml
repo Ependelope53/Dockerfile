@@ -2,7 +2,7 @@ name: Docker Build
 on:
   push:
     branches:
-      - manusiarakitan
+      - master
   schedule:
     - cron: '0 23 * * *'
 jobs:
