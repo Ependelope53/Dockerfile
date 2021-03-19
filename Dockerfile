@@ -157,7 +157,6 @@ RUN apt-get -qq update && apt-get -qq install -y --no-install-recommends \
     jq \
     ffmpeg \
     gnupg \
-    mediainfo \
     libxml2-dev \
     libssl-dev \
     libxslt-dev \
@@ -186,7 +185,7 @@ RUN wget -N https://chromedriver.storage.googleapis.com/87.0.4280.20/chromedrive
     chmod 0755 /usr/bin/chromedriver
 
 # Install python requirements
-RUN pip3 install --no-cache-dir -r https://raw.githubusercontent.com/ManusiaRakitan/Kampang-Bot/Kampang/requirements.txt --use-feature=2020-resolver
+RUN pip3 install --no-cache-dir -r https://raw.githubusercontent.com/ManusiaRakitan/Dockerfile/manusiarakitan/requirements.txt --use-feature=2020-resolver
 
 # Clean Up
 RUN apt-get clean --dry-run
